@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arch-TL.API", "Arch-TL.API\Arch-TL.API.csproj", "{D462A69C-ECED-474C-9A1F-E7DBF15803F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arch-TL.DAL", "..\Arch-TL.DAL\Arch-TL.DAL.csproj", "{B35609F2-A193-48AD-A1CB-B95F05EEE679}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arch-TL.BLL", "..\Arch-TL.BLL\Arch-TL.BLL.csproj", "{20AE3814-C33E-4E1C-ADD1-60C6366F8596}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arch-TL.TEST", "..\Arch-TL.TEST\Arch-TL.TEST.csproj", "{D8947944-F541-4806-8CB2-FCA3442A215A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D462A69C-ECED-474C-9A1F-E7DBF15803F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D462A69C-ECED-474C-9A1F-E7DBF15803F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D462A69C-ECED-474C-9A1F-E7DBF15803F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D462A69C-ECED-474C-9A1F-E7DBF15803F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B35609F2-A193-48AD-A1CB-B95F05EEE679}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B35609F2-A193-48AD-A1CB-B95F05EEE679}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B35609F2-A193-48AD-A1CB-B95F05EEE679}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B35609F2-A193-48AD-A1CB-B95F05EEE679}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20AE3814-C33E-4E1C-ADD1-60C6366F8596}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20AE3814-C33E-4E1C-ADD1-60C6366F8596}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20AE3814-C33E-4E1C-ADD1-60C6366F8596}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20AE3814-C33E-4E1C-ADD1-60C6366F8596}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8947944-F541-4806-8CB2-FCA3442A215A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8947944-F541-4806-8CB2-FCA3442A215A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8947944-F541-4806-8CB2-FCA3442A215A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8947944-F541-4806-8CB2-FCA3442A215A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4317E8B-C1A4-4EAB-936C-9A5132360616}
+	EndGlobalSection
+EndGlobal
