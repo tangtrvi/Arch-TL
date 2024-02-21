@@ -18,6 +18,7 @@ public static class ContextDependencyHelper
     public static IServiceCollection AddContextScope(this IServiceCollection services)
     {
         services.AddScoped<ILoggingRepository, LoggingRepository>();
+        services.AddScoped<IBiologyDomainRepository, BiologyDomainRepository>();
 
         return services;
     }

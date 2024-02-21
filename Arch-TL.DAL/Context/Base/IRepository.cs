@@ -12,7 +12,7 @@ public interface IRepository<T> where T : BaseEntity
 
     Task<List<T>> GetByKeysAsync(string key, List<object> values);
 
-    Task<List<T>> GetPageAsync(ScPagination pagination, params ScOrder[] orders);
+    Task<List<T>> GetPageAsync(ScPagination pagination, string searchText = null, params ScOrder[] orders);
 
     Task<int> InsertAsync(T entity);
 

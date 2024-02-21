@@ -27,14 +27,47 @@ public static class Q<T> where T : class
         return DbCache.TableName;
     }
 
-    public static string DisableColumn()
+    public static List<string> SearchCollumns()
     {
-        return DbCache.DisableColumnName;
+        return DbCache.ColumnsToSearch?.Select(x => x.ColumnName)?.ToList() ?? new List<string>();
     }
 
-    public static string DeleteColumn()
+    public static Type ActiveColumnType()
     {
-        return DbCache.DeleteColumnName;
+        if (DbCache.DisableColumn == null)
+            return null;
+
+        return DbCache.DisableColumn.Property.PropertyType;
+    }
+
+    public static Type DeleteColumnType()
+    {
+        if (DbCache.DeleteColumn == null)
+            return null;
+
+        return DbCache.DeleteColumn.Property.PropertyType;
+    }
+
+    public static string ActiveColumn(string alias)
+    {
+        if (DbCache.DisableColumn == null)
+            return null;
+
+        if (string.IsNullOrEmpty(alias))
+            return DbCache.DisableColumn.ColumnName;
+
+        return string.Join(".", DbCache.DisableColumn.ColumnName);
+    }
+
+    public static string DeleteColumn(string alias)
+    {
+        if (DbCache.DeleteColumn == null)
+            return null;
+
+        if (string.IsNullOrEmpty(alias))
+            return DbCache.DeleteColumn.ColumnName;
+
+        return string.Join(".", DbCache.DeleteColumn.ColumnName);
     }
 
     public static string Columns(string brief = null, List<string> skip = null)
@@ -410,16 +443,18 @@ public static class Q<T> where T : class
         private static readonly List<ColumnMetadata> _columns;
         private static readonly List<ColumnMetadata> _columnsToInsert;
         private static readonly List<ColumnMetadata> _columnsToUpdate;
+        private static readonly List<ColumnMetadata> _columnsToSearch;
 
         private static readonly Dictionary<PropertyInfo, ColumnMetadata> _propertyToColumnMap;
         public static string TableName { get; }
         public static string Key { get; }
-        public static string DisableColumnName { get; }
-        public static string DeleteColumnName { get; }
+        public static ColumnMetadata DisableColumn { get; }
+        public static ColumnMetadata DeleteColumn { get; }
 
         public static ReadOnlyCollection<ColumnMetadata> Columns { get; }
         public static ReadOnlyCollection<ColumnMetadata> ColumnsToInsert { get; }
         public static ReadOnlyCollection<ColumnMetadata> ColumnsToUpdate { get; }
+        public static ReadOnlyCollection<ColumnMetadata> ColumnsToSearch { get; }
 
         static DbCache()
         {
@@ -431,15 +466,17 @@ public static class Q<T> where T : class
 
             _columnsToInsert = IntializeColumnsToInsert(_columns);
             _columnsToUpdate = IntializeColumnsToUpdate(_columns);
+            _columnsToSearch = IntializeColumnsToSearch(_columns);
 
             Columns = new ReadOnlyCollection<ColumnMetadata>(_columns);
             ColumnsToInsert = new ReadOnlyCollection<ColumnMetadata>(_columnsToInsert);
             ColumnsToUpdate = new ReadOnlyCollection<ColumnMetadata>(_columnsToUpdate);
+            ColumnsToSearch = new ReadOnlyCollection<ColumnMetadata>(_columnsToSearch);
 
             _propertyToColumnMap = _columns.ToDictionary(c => c.Property, comparer: new PropertyInfoEqualityComparer());
 
-            DisableColumnName = InitializeDisableColumn(_columns);
-            DeleteColumnName = InitializeDeleteColumn(_columns);
+            DisableColumn = InitializeDisableColumn(_columns);
+            DeleteColumn = InitializeDeleteColumn(_columns);
         }
 
         public static ColumnMetadata Column(PropertyInfo property)
@@ -457,7 +494,7 @@ public static class Q<T> where T : class
                 throw new NotSupportedException($"The type {type.Name} doesn't have a TableAttribute");
             }
 
-            return "\"" + tableAttibute.Name + "\"";
+            return "`" + tableAttibute.Name + "`";
         }
 
         private static string InitializePrimaryKey(List<ColumnMetadata> columns)
@@ -474,28 +511,56 @@ public static class Q<T> where T : class
             return null;
         }
 
-        private static string InitializeDisableColumn(List<ColumnMetadata> columns)
+        private static Type InitializeDisableColumnType(List<ColumnMetadata> columns)
         {
             foreach (var column in columns)
             {
-                var disableColumn = column.Property.GetCustomAttribute<DisableColumnAttribute>();
+                var disableColumn = column.Property.GetCustomAttribute<ActiveColumnAttribute>();
                 if (disableColumn != null)
                 {
-                    return column.ColumnName;
+                    return column.Property.PropertyType;
                 }
             }
 
             return null;
         }
 
-        private static string InitializeDeleteColumn(List<ColumnMetadata> columns)
+        private static Type InitializeDeleteColumnType(List<ColumnMetadata> columns)
         {
             foreach (var column in columns)
             {
                 var deleteColumn = column.Property.GetCustomAttribute<DeleteColumnAttribute>();
                 if (deleteColumn != null)
                 {
-                    return column.ColumnName;
+                    return column.Property.PropertyType;
+                }
+            }
+
+            return null;
+        }
+
+        private static ColumnMetadata InitializeDisableColumn(List<ColumnMetadata> columns)
+        {
+            foreach (var column in columns)
+            {
+                var disableColumn = column.Property.GetCustomAttribute<ActiveColumnAttribute>();
+                if (disableColumn != null)
+                {
+                    return column;
+                }
+            }
+
+            return null;
+        }
+
+        private static ColumnMetadata InitializeDeleteColumn(List<ColumnMetadata> columns)
+        {
+            foreach (var column in columns)
+            {
+                var deleteColumn = column.Property.GetCustomAttribute<DeleteColumnAttribute>();
+                if (deleteColumn != null)
+                {
+                    return column;
                 }
             }
 
@@ -521,6 +586,22 @@ public static class Q<T> where T : class
             return result;
         }
 
+        private static List<ColumnMetadata> IntializeColumnsToSearch(List<ColumnMetadata> columns)
+        {
+            var result = new List<ColumnMetadata>();
+
+            foreach (var column in columns)
+            {
+                var attribute = column.Property.GetCustomAttribute<SearchTextAttribute>();
+                if (attribute != null)
+                {
+                    result.Add(column);
+                }
+            }
+
+            return result;
+        }
+
         private static List<ColumnMetadata> IntializeColumnsToInsert(List<ColumnMetadata> columns)
         {
             var result = new List<ColumnMetadata>();
@@ -534,7 +615,6 @@ public static class Q<T> where T : class
             }
             return result;
         }
-
         private static List<ColumnMetadata> IntializeColumnsToUpdate(List<ColumnMetadata> columns)
         {
             var result = new List<ColumnMetadata>();

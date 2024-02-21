@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Arch_TL.DAL.Attributes;
 
-internal class DisableColumnAttribute : Attribute
+internal class ActiveColumnAttribute : Attribute
 {
 
 }

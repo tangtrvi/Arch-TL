@@ -75,9 +75,20 @@ public abstract class Repository<T> : IRepository<T> where T : BaseEntity
         throw new NotImplementedException();
     }
 
-    public Task<List<T>> GetPageAsync(ScPagination pagination, params ScOrder[] orders)
+    public Task<List<T>> GetPageAsync(ScPagination pagination, string searchText = null, params ScOrder[] orders)
     {
-        throw new NotImplementedException();
+        var builder = new SqlStatementBuilder();
+        var sql = builder.AddTemplate($"SELECT {Q<T>.Columns()} FROM {Q<T>.Table()} /**where**/ /**orderby**/ /**limit**/");
+
+        builder.OnlyExisted<T>();
+        builder.OnlyActive<T>();
+
+        if (!string.IsNullOrEmpty(searchText))
+            builder.SearchText<T>(searchText);
+
+        builder.Limit(pagination);
+
+        return Orm.QueryAsync<T>(sql.RawSql, sql.Parameters);
     }
 
     public Task<int> InsertAsync(T entity)

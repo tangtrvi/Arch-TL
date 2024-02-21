@@ -22,4 +22,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Arch-TL.BLL\Arch-TL.BLL.csproj" />
+  </ItemGroup>
+
 </Project>
